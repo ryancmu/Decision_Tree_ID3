@@ -1,8 +1,5 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by ryan on 4/2/16.
@@ -49,10 +46,7 @@ public class DecisionTree {
                 attributes.add(elements[1]);
                 line = br.readLine();
             }
-
             label = attributes.get(attributes.size() - 1);
-
-            int attrSize = attributes.size();
 
             //step 3:   read the data rows
             while((line = br.readLine()) != null){
@@ -82,9 +76,18 @@ public class DecisionTree {
         }
 
         //TODO!!! It's better to create an Attribute class to save all the possible values of each attribute
+        double entropy = 0;
+        int datasetSize = curDataset.size();
 
+        Iterator it = labelMap.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry<String, Integer> pair = (Map.Entry) it.next();
+            int times = pair.getValue();
+            double pk = (double)times / (double)datasetSize;
+            entropy += - pk * Math.log(pk);
+        }
 
-        return 0;
+        return entropy;
     }
 
     // Calculate the Information Gain
@@ -103,6 +106,7 @@ public class DecisionTree {
         node.setDataset(curDataset);
 
         double infoEntropy = calcIE(curDataset);
+        double infoGain = 0;
 
         // select the attribute for this node
         for (String attr: leftAttribute){
