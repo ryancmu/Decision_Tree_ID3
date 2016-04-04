@@ -185,9 +185,32 @@ public class DecisionTree {
         return curDataset.size() == 0 ? true : false;
     }
 
-    private  boolean checkEmptyAttribute (List<String> leftAttributes){
+    private boolean checkEmptyAttribute (List<String> leftAttributes){
         return leftAttributes.size() == 0 ? true : false;
     }
+
+    private String findMajorityLabel(List<Entry> curDataset){
+        Map<String, Integer> labelMap = new HashMap<>();
+        for(Entry e : curDataset){
+            String tmpLabel = e.getKvPair().get(label);
+            if(!labelMap.containsKey(tmpLabel)){
+                labelMap.put(tmpLabel, 0);
+            } else {
+                labelMap.put(tmpLabel, labelMap.get(tmpLabel) + 1);
+            }
+        }
+
+        int maxTime = 0;
+        String maxLabel = null;
+        for (Map.Entry<String, Integer> entry : labelMap.entrySet()) {
+            if(entry.getValue() > maxTime){
+                maxLabel = entry.getKey();
+                maxTime = entry.getValue();
+            }
+        }
+        return maxLabel;
+    }
+
 
     private List<Entry> getDatasetByAttrValue(List<Entry> curDataset, String attr, String value){
 
