@@ -110,7 +110,9 @@ public class DecisionTree {
 
         // select the attribute for this node
         for (String attr: leftAttribute){
+            // get the new dataset of attr
 
+            double ig = infoEntropy - ()
         }
 
     }
