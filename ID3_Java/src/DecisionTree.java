@@ -53,11 +53,16 @@ public class DecisionTree {
             }
             label = attributes.get(attributes.size() - 1);
 
+            // read the useless "@data" line
+            line = br.readLine();
+
             //step 3:   read the data rows
             while((line = br.readLine()) != null){
                 String[] elements = line.split(",");
                 Entry entry = new Entry(attributes, elements);
-                //TODO!!! add all possible values to corresponding Attribute
+
+                //add all possible values to corresponding Attribute
+                addValueToAttributes(attributes, attributeMap, elements);
                 dataset.add(entry);
             }
 
@@ -167,6 +172,7 @@ public class DecisionTree {
         return node;
     }
 
+    // Check whether all dataset have the same label
     private boolean checkSameLabel(List<Entry> curDataset){
         String curLabel = null;
         for (Entry e: curDataset){
@@ -181,14 +187,17 @@ public class DecisionTree {
         return true;
     }
 
+    // Check whether the dataset is empty
     private boolean checkEmptyDataset(List<Entry> curDataset){
         return curDataset.size() == 0 ? true : false;
     }
 
+    // Check whether the attribute left is empty
     private boolean checkEmptyAttribute (List<String> leftAttributes){
         return leftAttributes.size() == 0 ? true : false;
     }
 
+    // Find the majority label for this dataset
     private String findMajorityLabel(List<Entry> curDataset){
         Map<String, Integer> labelMap = new HashMap<>();
         for(Entry e : curDataset){
@@ -232,6 +241,18 @@ public class DecisionTree {
             }
         }
         return leftAttributes;
+    }
+
+    private void addValueToAttributes(List<String> attrs, Map<String, Attribute> attrMap, String[] elements){
+        for (int i = 0; i < attrs.size(); i++){
+            String value = elements[i];
+            Attribute attribute = attrMap.get(attrs.get(i));
+            if(attribute.getValueList().contains(value)){
+                continue;
+            } else {
+                attribute.addValue(value);
+            }
+        }
     }
 
     // Cross Validation
