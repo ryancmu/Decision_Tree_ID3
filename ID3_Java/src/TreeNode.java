@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,11 @@ public class TreeNode {
 
     // The data in this node
     private List<Entry> dataset;
+
+    public TreeNode(List<Entry> dataset){
+        this.dataset = dataset;
+        children = new HashMap<>();
+    }
 
     public String getType() {
         return type;

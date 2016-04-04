@@ -15,6 +15,8 @@ public class DecisionTree {
     // Save all attribute names
     List<String> attributes = new ArrayList<>();
 
+    Map<String, Attribute> attributeMap = new HashMap<>();
+
     // Save all data rows
     List<Entry> dataset = new ArrayList<>();
 
@@ -43,6 +45,9 @@ public class DecisionTree {
             //step 2:   read and add all atttributes
             while(!line.equals("")){
                 String[] elements = line.split("\\s+");
+
+                Attribute tmpAttr = new Attribute(elements[1].trim());
+                attributeMap.put(elements[1].trim(), tmpAttr);
                 attributes.add(elements[1]);
                 line = br.readLine();
             }
@@ -52,6 +57,7 @@ public class DecisionTree {
             while((line = br.readLine()) != null){
                 String[] elements = line.split(",");
                 Entry entry = new Entry(attributes, elements);
+                //TODO!!! add all possible values to corresponding Attribute
                 dataset.add(entry);
             }
 
@@ -75,7 +81,6 @@ public class DecisionTree {
             }
         }
 
-        //TODO!!! It's better to create an Attribute class to save all the possible values of each attribute
         double entropy = 0;
         int datasetSize = curDataset.size();
 
@@ -96,25 +101,75 @@ public class DecisionTree {
     }
 
     // Recusive to build the decision tree
-    private void buildTree(List<Entry> curDataset, List<String> leftAttribute){
+    private TreeNode buildTree(List<Entry> curDataset, List<String> leftAttribute){
         /*      recusive stop condition
                     1. All current dataset are from same label
                     2. The current dataset is empty
                     3. All dataset's values are same for all attributes
           */
-        TreeNode node = new TreeNode();
-        node.setDataset(curDataset);
+        TreeNode node = new TreeNode(curDataset);
 
         double infoEntropy = calcIE(curDataset);
         double infoGain = 0;
+        String splitAttr = "";
 
         // select the attribute for this node
         for (String attr: leftAttribute){
             // get the new dataset of attr
+            Attribute tmpAttr = attributeMap.get(attr);
+            List<String> tmpValueList = tmpAttr.getValueList();
+            double cIG = 0;
+            for (String value: tmpValueList){
+                List<Entry> tmpDataset = new ArrayList<>();
+                for (Entry e : curDataset){
+                    if (e.getKvPair().get(tmpAttr.getName()).equals(value)){
+                        tmpDataset.add(e);
+                    }
+                }
+                cIG += ((double) tmpDataset.size() / curDataset.size() ) * calcIE(tmpDataset);
+            }
 
-            double ig = infoEntropy - ()
+            double ig = infoEntropy - cIG;
+            if(ig > infoGain){
+                infoGain = ig;
+                splitAttr = attr;
+            }
         }
 
+        // Generate the new leftAttribetes for Children
+        node.setAttribute(splitAttr);
+        List<String> nextLeftAttributes = removeAttr(leftAttribute, splitAttr);
+
+        // Recusive to build children
+        Attribute attribute = attributeMap.get(splitAttr);
+        for (String attrValue : attribute.getValueList()){
+            List<Entry> tmpDataset = getDatasetByAttrValue(curDataset, splitAttr, attrValue);
+            node.getChildren().put(attrValue, buildTree(tmpDataset, nextLeftAttributes));
+        }
+
+        return node;
+    }
+
+    private List<Entry> getDatasetByAttrValue(List<Entry> curDataset, String attr, String value){
+
+        //TODO this method can be optimized by get all datasets of all values by one loop
+        List<Entry> newDataset = new ArrayList<>();
+        for (Entry e : curDataset){
+            if(e.getKvPair().get(attr).equals(value)){
+                newDataset.add(e);
+            }
+        }
+        return newDataset;
+    }
+
+    private List<String> removeAttr(List<String> attrs, String rmAttr){
+        List<String> leftAttributes = new ArrayList<>();
+        for (String s : attrs){
+            if(!s.equals(rmAttr)){
+                leftAttributes.add(s);
+            }
+        }
+        return leftAttributes;
     }
 
     // Cross Validation
