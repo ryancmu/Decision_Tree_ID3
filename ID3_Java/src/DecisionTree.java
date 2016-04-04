@@ -109,6 +109,23 @@ public class DecisionTree {
           */
         TreeNode node = new TreeNode(curDataset);
 
+        // If satisfy the stop condition
+        if(checkSameLabel(curDataset)){
+            node.setType(TreeNode.LEAF_NODE);
+            node.setResLabel(curDataset.get(0).getKvPair().get(label));
+            return node;
+        }
+        if (checkEmptyDataset(curDataset)){
+            return null;
+        }
+
+        if (checkEmptyAttribute(leftAttribute)){
+            node.setType(TreeNode.LEAF_NODE);
+            node.setResLabel(findMajorityLabel(dataset));
+            return node;
+        }
+
+        node.setType(TreeNode.ROOT_NODE);
         double infoEntropy = calcIE(curDataset);
         double infoGain = 0;
         String splitAttr = "";
@@ -148,6 +165,28 @@ public class DecisionTree {
         }
 
         return node;
+    }
+
+    private boolean checkSameLabel(List<Entry> curDataset){
+        String curLabel = null;
+        for (Entry e: curDataset){
+            if (curLabel == null){
+                curLabel = e.getKvPair().get(label);
+            } else {
+                if(!curLabel.equals(e.getKvPair().get(label))){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean checkEmptyDataset(List<Entry> curDataset){
+        return curDataset.size() == 0 ? true : false;
+    }
+
+    private  boolean checkEmptyAttribute (List<String> leftAttributes){
+        return leftAttributes.size() == 0 ? true : false;
     }
 
     private List<Entry> getDatasetByAttrValue(List<Entry> curDataset, String attr, String value){

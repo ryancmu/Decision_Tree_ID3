@@ -11,6 +11,10 @@ import java.util.Map;
  */
 public class TreeNode {
 
+    public final static String ROOT_NODE = "root";
+
+    public final static String LEAF_NODE = "leaf";
+
     // Two types of node: leaf or root
     private String type;
 
