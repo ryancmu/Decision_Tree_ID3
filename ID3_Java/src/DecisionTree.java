@@ -122,10 +122,6 @@ public class DecisionTree {
             return node;
         }
 
-        //TODO!!! This case need to be handled before recursive
-        if (checkEmptyDataset(curDataset)){
-            return null;
-        }
 
         if (checkEmptyAttribute(leftAttribute)){
             node.setType(TreeNode.LEAF_NODE);
@@ -169,9 +165,16 @@ public class DecisionTree {
         Attribute attribute = attributeMap.get(splitAttr);
         for (String attrValue : attribute.getValueList()){
             List<Entry> tmpDataset = getDatasetByAttrValue(curDataset, splitAttr, attrValue);
-            node.getChildren().put(attrValue, buildTree(tmpDataset, nextLeftAttributes));
+            // if the datasize is empty, just create a new lead node and the resLabel is the majority of parent dataset
+            if (tmpDataset == null || tmpDataset.size() == 0){
+                TreeNode newNode = new TreeNode(null);
+                newNode.setResLabel(findMajorityLabel(curDataset));
+                newNode.setType(TreeNode.LEAF_NODE);
+                node.getChildren().put(attrValue, newNode);
+            } else {
+                node.getChildren().put(attrValue, buildTree(tmpDataset, nextLeftAttributes));
+            }
         }
-
         return node;
     }
 
@@ -259,7 +262,31 @@ public class DecisionTree {
     }
 
     // Cross Validation
-    private void crossValidate(){
+    private void crossValidate(List<Entry> dataset, TreeNode root, int fold){
+        // Make the dataset random
+        Collections.shuffle(dataset);
+
+        // Extract 10% every time to test, and left dataset to train
+        List<List<Entry>> foldList = new ArrayList<>();
+        int numFold = dataset.size() / fold;
+        for (int i = 0; i < fold; i++){
+            List<Entry> tmpList = new ArrayList<>();
+            int start = i * numFold;
+            int end = i == (fold - 1) ? dataset.size() : (i + 1) * numFold;
+            for(int j = start; j < end; j++){
+                tmpList.add(dataset.get(j));
+            }
+            foldList.add(tmpList);
+        }
+
+        for (int i = 0; i < fold; i++){
+            List<Entry> newDataset = new ArrayList<>();
+            for(int j = 0; j < fold; j++){
+
+            }
+        }
+
+
 
     }
 
