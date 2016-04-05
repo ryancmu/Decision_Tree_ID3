@@ -121,6 +121,8 @@ public class DecisionTree {
             node.setResLabel(curDataset.get(0).getKvPair().get(label));
             return node;
         }
+
+        //TODO!!! This case need to be handled before recursive
         if (checkEmptyDataset(curDataset)){
             return null;
         }
