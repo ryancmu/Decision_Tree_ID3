@@ -110,7 +110,8 @@ public class DecisionTree {
         /*      recusive stop condition
                     1. All current dataset are from same label
                     2. The current dataset is empty
-                    3. All dataset's values are same for all attributes
+                    3. There's no attribute left
+                    4. All dataset's values are same for all attributes
           */
         TreeNode node = new TreeNode(curDataset);
 
