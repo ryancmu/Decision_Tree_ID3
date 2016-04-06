@@ -260,7 +260,7 @@ public class DecisionTree {
     }
 
     // Cross Validation
-    private void crossValidate(List<Entry> dataset, TreeNode root, int fold) {
+    private void crossValidate(List<Entry> dataset, int fold) {
         // Make the dataset random
         Collections.shuffle(dataset);
 
@@ -291,8 +291,35 @@ public class DecisionTree {
             accuracy += getAccuracy(newDataset, foldList.get(i));
 
         }
+        double avgAccuracy = accuracy / fold;
+    }
 
+    private double getAccuracy(List<Entry> trainDataset, List<Entry> testDataset){
+        TreeNode root = buildTree(trainDataset, attributes);
+        int testNum = testDataset.size();
+        int correctNum = 0;
+        for(Entry e: testDataset) {
+            if (classifyOneEntry(e, root)){
+                correctNum++;
+            }
+        }
+        double accuracy = (double)correctNum / testNum;
+        return accuracy;
+    }
 
+    private boolean classifyOneEntry(Entry e, TreeNode root){
+        // If it is a leaf node, just return true or false;
+        if (root.getType().equals(TreeNode.LEAF_NODE)){
+            if (e.getKvPair().get(label).equals(root.getResLabel())){
+                return true;
+            } else {
+                return false;
+            }
+        }
+        String attr = root.getAttribute();
+        String entryAttrValue = e.getKvPair().get(attr);
+        TreeNode nextNode = root.getChildren().get(entryAttrValue);
+        return classifyOneEntry(e, nextNode);
     }
 
     // Predict the test set
