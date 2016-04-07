@@ -11,24 +11,30 @@ import java.util.*;
 public class DecisionTree {
 
     // Save all attribute names
-    List<String> attributes = new ArrayList<>();
+    List<String> attributes;
 
-    Map<String, Attribute> attributeMap = new HashMap<>();
+    Map<String, Attribute> attributeMap;
 
     // Save all data rows
-    List<Entry> dataset = new ArrayList<>();
+    List<Entry> dataset;
 
     // Save the label name
     String label = null;
 
-    // Input Process
-    private void processInput() throws Exception {
 
+    public DecisionTree(){
+        attributes = new ArrayList<>();
+        attributeMap = new HashMap<>();
+        dataset = new ArrayList<>();
+    }
+
+    // Input Process
+    public void processInput() throws Exception {
 
         BufferedReader br;
 
         try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream("dataset.arff")));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("trainProdSelection.arff")));
 
             String line = null;
             while ((line = br.readLine()) != null) {
@@ -64,12 +70,15 @@ public class DecisionTree {
                 dataset.add(entry);
             }
 
+            System.out.println(dataset.size());
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     // Calculate the Information Entropy
     private double calcIE(List<Entry> curDataset) {
@@ -260,7 +269,7 @@ public class DecisionTree {
     }
 
     // Cross Validation
-    private void crossValidate(List<Entry> dataset, int fold) {
+    private double crossValidate(List<Entry> dataset, int fold) {
         // Make the dataset random
         Collections.shuffle(dataset);
 
@@ -292,6 +301,7 @@ public class DecisionTree {
 
         }
         double avgAccuracy = accuracy / fold;
+        return avgAccuracy;
     }
 
     private double getAccuracy(List<Entry> trainDataset, List<Entry> testDataset){
@@ -326,6 +336,9 @@ public class DecisionTree {
     private void predictTestData() {
 
     }
+
+
+
 
 
 }
