@@ -7,6 +7,8 @@ public class Farmer {
     public static void main(String[] args) throws Exception {
         DecisionTree dt = new DecisionTree();
         dt.processInput();
+        //dt.testBuild();
+        System.out.println(dt.crossValidate(10));
 
     }
 

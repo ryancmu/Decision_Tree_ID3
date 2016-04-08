@@ -28,13 +28,26 @@ public class DecisionTree {
         dataset = new ArrayList<>();
     }
 
+    public void testBuild(){
+        List<String> leftAttrs = new ArrayList<>();
+        for(String s : attributes){
+            if(s.equals(label)){
+                continue;
+            } else {
+                leftAttrs.add(s);
+            }
+        }
+        buildTree(dataset, leftAttrs);
+    }
+
     // Input Process
     public void processInput() throws Exception {
 
         BufferedReader br;
 
         try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream("trainProdSelection.arff")));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("trainProdIntro.binary2.arff")));
+            //br = new BufferedReader(new InputStreamReader(new FileInputStream("test.arff")));
 
             String line = null;
             while ((line = br.readLine()) != null) {
@@ -71,6 +84,12 @@ public class DecisionTree {
             }
 
             System.out.println(dataset.size());
+            for (Entry e : dataset){
+                for (String s: attributes){
+                    System.out.print(e.getKvPair().get(s) + " ");
+                }
+                System.out.println("");
+            }
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -83,6 +102,9 @@ public class DecisionTree {
     // Calculate the Information Entropy
     private double calcIE(List<Entry> curDataset) {
         Map<String, Integer> labelMap = new HashMap<>();
+//        for (Entry e: curDataset){
+//
+//        }
 
         for (Entry e : curDataset) {
             String tmpLabel = e.getKvPair().get(label);
@@ -101,7 +123,7 @@ public class DecisionTree {
             Map.Entry<String, Integer> pair = (Map.Entry) it.next();
             int times = pair.getValue();
             double pk = (double) times / (double) datasetSize;
-            entropy += -pk * Math.log(pk);
+            entropy += (-1) * pk * Math.log(pk);
         }
 
         return entropy;
@@ -113,7 +135,7 @@ public class DecisionTree {
     }
 
     // Recusive to build the decision tree
-    private TreeNode buildTree(List<Entry> curDataset, List<String> leftAttribute) {
+    public TreeNode buildTree(List<Entry> curDataset, List<String> leftAttribute) {
         /*      recusive stop condition
                     1. All current dataset are from same label
                     2. The current dataset is empty
@@ -129,20 +151,39 @@ public class DecisionTree {
             return node;
         }
 
+        if(checkSameAttributeValue(curDataset, leftAttribute)){
+            node.setType(TreeNode.LEAF_NODE);
+            node.setResLabel(findMajorityLabel(curDataset));
+            return node;
+        }
+
 
         if (checkEmptyAttribute(leftAttribute)) {
             node.setType(TreeNode.LEAF_NODE);
-            node.setResLabel(findMajorityLabel(dataset));
+            node.setResLabel(findMajorityLabel(curDataset));
             return node;
         }
 
         node.setType(TreeNode.ROOT_NODE);
         double infoEntropy = calcIE(curDataset);
+        System.out.println("=====calculate info entropy=====");
+//        for (Entry e: curDataset){
+//            System.out.print(e.getKvPair().get(label) + " / ");
+//        }
+        System.out.println(infoEntropy);
         double infoGain = 0;
         String splitAttr = "";
 
         // select the attribute for this node
+        System.out.println("Attribute Number: " + leftAttribute.size() + " " + leftAttribute.get(0));
+        System.out.println("number of dataset " + curDataset.size());
+//        if(curDataset.size() == 4){
+//            Map<String, String> tmpMap = curDataset.get(i)
+//        }
         for (String attr : leftAttribute) {
+
+            System.out.println("Attr Name: " + attr);
+
             // get the new dataset of attr
             Attribute tmpAttr = attributeMap.get(attr);
             List<String> tmpValueList = tmpAttr.getValueList();
@@ -154,7 +195,9 @@ public class DecisionTree {
                         tmpDataset.add(e);
                     }
                 }
+
                 cIG += ((double) tmpDataset.size() / curDataset.size()) * calcIE(tmpDataset);
+                System.out.println("Attr Value " + value + " cIG = " + cIG);
             }
 
             double ig = infoEntropy - cIG;
@@ -163,6 +206,8 @@ public class DecisionTree {
                 splitAttr = attr;
             }
         }
+
+        System.out.println("split Attribute: " + splitAttr + " IG: " + infoGain);
 
         // Generate the new leftAttribetes for Children
         node.setAttribute(splitAttr);
@@ -178,7 +223,13 @@ public class DecisionTree {
                 newNode.setResLabel(findMajorityLabel(curDataset));
                 newNode.setType(TreeNode.LEAF_NODE);
                 node.getChildren().put(attrValue, newNode);
-            } else {
+            } else if(nextLeftAttributes.size() == 0){
+                TreeNode newNode = new TreeNode(null);
+                newNode.setResLabel(findMajorityLabel(tmpDataset));
+                newNode.setType(TreeNode.LEAF_NODE);
+                node.getChildren().put(attrValue, newNode);
+            }
+            else {
                 node.getChildren().put(attrValue, buildTree(tmpDataset, nextLeftAttributes));
             }
         }
@@ -208,6 +259,18 @@ public class DecisionTree {
     // Check whether the attribute left is empty
     private boolean checkEmptyAttribute(List<String> leftAttributes) {
         return leftAttributes.size() == 0 ? true : false;
+    }
+
+    private boolean checkSameAttributeValue(List<Entry> curDataset, List<String> leftAttributes){
+        for (String s : leftAttributes){
+            String attrValue = curDataset.get(0).getKvPair().get(s);
+            for(int i = 1; i < curDataset.size(); i++){
+                if(!curDataset.get(i).getKvPair().get(s).equals(attrValue)){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     // Find the majority label for this dataset
@@ -269,7 +332,8 @@ public class DecisionTree {
     }
 
     // Cross Validation
-    private double crossValidate(List<Entry> dataset, int fold) {
+    public double crossValidate(int fold) {
+
         // Make the dataset random
         Collections.shuffle(dataset);
 
@@ -305,7 +369,15 @@ public class DecisionTree {
     }
 
     private double getAccuracy(List<Entry> trainDataset, List<Entry> testDataset){
-        TreeNode root = buildTree(trainDataset, attributes);
+        List<String> leftAttrs = new ArrayList<>();
+        for(String s : attributes){
+            if(s.equals(label)){
+                continue;
+            } else {
+                leftAttrs.add(s);
+            }
+        }
+        TreeNode root = buildTree(trainDataset, leftAttrs);
         int testNum = testDataset.size();
         int correctNum = 0;
         for(Entry e: testDataset) {
@@ -336,9 +408,5 @@ public class DecisionTree {
     private void predictTestData() {
 
     }
-
-
-
-
 
 }
