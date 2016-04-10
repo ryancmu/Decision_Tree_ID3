@@ -46,7 +46,7 @@ public class Farmer {
     private static void crossValidation(String inputPath, int fold) throws Exception {
 
         PreReadFile prf = new PreReadFile();
-        if ("a".equals(taskNo)){
+        if ("b".equals(taskNo)){
             prf.parseTrainProdIntro(inputPath);
         } else {
             prf.parseTrainProdSelect(inputPath);

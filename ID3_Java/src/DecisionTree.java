@@ -43,7 +43,7 @@ public class DecisionTree {
         BufferedReader br;
 
         try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream("trainProdIntro.binary2.arff")));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("train_tmp.arff")));
             //br = new BufferedReader(new InputStreamReader(new FileInputStream("test.arff")));
 
             String line = null;
@@ -215,7 +215,7 @@ public class DecisionTree {
 //            System.out.print(e.getKvPair().get(label) + " / ");
 //        }
         System.out.println(infoEntropy);
-        double infoGain = 0;
+        double infoGain = -100;
         String splitAttr = "";
 
         // select the attribute for this node
@@ -425,7 +425,7 @@ public class DecisionTree {
         int testNum = testDataset.size();
         int correctNum = 0;
         for(Entry e: testDataset) {
-            if (classifyOneEntry(e, root).equals(e.getKvPair().get(label))){
+            if (e.getKvPair().get(label).equals(classifyOneEntry(e, root))){
                 correctNum++;
             }
         }

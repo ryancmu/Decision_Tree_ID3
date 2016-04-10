@@ -1,12 +1,7 @@
 /**
  * Created by messy on 4/7/16.
  */
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,6 +44,20 @@ public class PreReadFile {
 //        }
     }
 
+    public void parseTestProdSelect(String testFileName){
+        BufferedWriter bw;
+        try {
+            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("test_tmp.arff")));
+
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
     public void parseTrainProdSelect(String fileName) {
         BufferedReader br = null;
         FileWriter fWriter = null;
@@ -57,7 +66,7 @@ public class PreReadFile {
         System.out.println(fileName);
         try {
 
-            fWriter = new FileWriter("trainProdSelection2.arff", false);
+            fWriter = new FileWriter("train_tmp.arff", false);
             bw = new BufferedWriter(fWriter);
 
             br = new BufferedReader(new FileReader(fileName));
@@ -157,7 +166,7 @@ public class PreReadFile {
         System.out.println(fileName);
         try {
 
-            fWriter = new FileWriter("trainProdIntro.binary2.arff", false);
+            fWriter = new FileWriter("train_tmp.arff", false);
             bw = new BufferedWriter(fWriter);
 
             br = new BufferedReader(new FileReader(fileName));
