@@ -3,10 +3,7 @@ import java.util.*;
 
 /**
  * Created by ryan on 4/2/16.
- * <p>
- * Some References: http://www.cnblogs.com/zhangchaoyang/articles/2196631.html
- * http://czhsuccess.iteye.com/blog/1864652
- * https://github.com/charlottelinxue/C4.5-Decision-Tree-Implementation
+ *
  */
 public class DecisionTree {
 
@@ -83,19 +80,66 @@ public class DecisionTree {
                 dataset.add(entry);
             }
 
-            System.out.println(dataset.size());
-            for (Entry e : dataset){
-                for (String s: attributes){
-                    System.out.print(e.getKvPair().get(s) + " ");
-                }
-                System.out.println("");
-            }
+//            System.out.println(dataset.size());
+//            for (Entry e : dataset){
+//                for (String s: attributes){
+//                    System.out.print(e.getKvPair().get(s) + " ");
+//                }
+//                System.out.println("");
+//            }
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Entry> processTestInput(){
+
+        List<Entry> testDataSet = new ArrayList<>();
+
+        BufferedReader br;
+
+        try {
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("test_tmp.arff")));
+
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                // First Read until @attribute attrName value(s)
+                if (line.split("\\s+").length != 3) {
+                    continue;
+                } else {
+                    break;
+                }
+            }
+
+            //step 2:   read and add all atttributes
+            while (!line.equals("")) {
+                line = br.readLine();
+            }
+
+            // read the useless "@data" line
+            line = br.readLine();
+
+            //step 3:   read the data rows
+            while ((line = br.readLine()) != null) {
+                String[] elements = line.split(",");
+                Entry entry = new Entry(attributes, elements);
+
+                //add all possible values to corresponding Attribute
+                //addValueToAttributes(attributes, attributeMap, elements);
+                testDataSet.add(entry);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return testDataSet;
     }
 
 
@@ -381,7 +425,7 @@ public class DecisionTree {
         int testNum = testDataset.size();
         int correctNum = 0;
         for(Entry e: testDataset) {
-            if (classifyOneEntry(e, root)){
+            if (classifyOneEntry(e, root).equals(e.getKvPair().get(label))){
                 correctNum++;
             }
         }
@@ -389,14 +433,10 @@ public class DecisionTree {
         return accuracy;
     }
 
-    private boolean classifyOneEntry(Entry e, TreeNode root){
+    private String classifyOneEntry(Entry e, TreeNode root){
         // If it is a leaf node, just return true or false;
         if (root.getType().equals(TreeNode.LEAF_NODE)){
-            if (e.getKvPair().get(label).equals(root.getResLabel())){
-                return true;
-            } else {
-                return false;
-            }
+            return root.getResLabel();
         }
         String attr = root.getAttribute();
         String entryAttrValue = e.getKvPair().get(attr);
@@ -404,9 +444,37 @@ public class DecisionTree {
         return classifyOneEntry(e, nextNode);
     }
 
+
     // Predict the test set
     private void predictTestData() {
 
+        List<Entry> testDataset = processTestInput();
+
+        List<String> leftAttrs = new ArrayList<>();
+        for(String s : attributes){
+            if(s.equals(label)){
+                continue;
+            } else {
+                leftAttrs.add(s);
+            }
+        }
+        TreeNode root = buildTree(dataset, leftAttrs);
+
+        BufferedWriter bw;
+        try {
+            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("result.arff")));
+            for (Entry e : testDataset){
+                String eLabel = classifyOneEntry(e, root);
+                e.getKvPair().put(label, eLabel);
+                bw.write(e.toString());
+                bw.newLine();
+            }
+            bw.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -42,14 +42,14 @@ public class PreReadFile {
         String fileName = "trainProdIntro.binary.arff";
 //          String fileName = "trainProdIntro.binary.arff";
 
-        if (fileName.equals("trainProdIntro.binary.arff")) {
-            parseTrainProdIntro(fileName);
-        } else {
-            parseTrainProdSelect(fileName);
-        }
+//        if (fileName.equals("trainProdIntro.binary.arff")) {
+//            parseTrainProdIntro(fileName);
+//        } else {
+//            parseTrainProdSelect(fileName);
+//        }
     }
 
-    private static void parseTrainProdSelect(String fileName) {
+    public void parseTrainProdSelect(String fileName) {
         BufferedReader br = null;
         FileWriter fWriter = null;
         BufferedWriter bw = null;
@@ -148,7 +148,7 @@ public class PreReadFile {
 
     }
 
-    private static void parseTrainProdIntro(String fileName) {
+    public void parseTrainProdIntro(String fileName) {
 
         BufferedReader br = null;
         FileWriter fWriter = null;

@@ -9,7 +9,8 @@ import java.util.Map;
  */
 public class Entry {
     // kvPair used to store the value of every field of this row
-    Map<String, String> kvPair;
+    private Map<String, String> kvPair;
+    private List<String> attributes;
 
     public Entry(List<String> attributes, String[] row) throws Exception {
 
@@ -17,6 +18,8 @@ public class Entry {
         if (attributes.size() != row.length) {
             throw new Exception("Illegal Row");
         }
+
+        this.attributes = attributes;
 
         // initial the map
         kvPair = new HashMap<>();
@@ -29,5 +32,14 @@ public class Entry {
 
     public Map<String, String> getKvPair() {
         return kvPair;
+    }
+
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        for (String s: attributes){
+            sb.append(s).append(" ");
+        }
+        String res = sb.toString();
+        return res.substring(0, res.length() - 1);
     }
 }
