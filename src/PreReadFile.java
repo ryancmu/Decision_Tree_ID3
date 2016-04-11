@@ -8,7 +8,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class PreReadFile {
-    // you can change this number to indicate how many partition point in the tree (for all node with number)
+    // you can change this number to indicate how many partition point in the tree 
+    // (for all node with number,must >= 1)
     private static int partition = 1;
 
     // store the partition points of column 2,3,6,7 in trainProdIntro
