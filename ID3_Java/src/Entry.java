@@ -37,7 +37,7 @@ public class Entry {
     public String toString(){
         StringBuilder sb = new StringBuilder();
         for (String s: attributes){
-            sb.append(s).append(" ");
+            sb.append(String.format("%15s",kvPair.get(s))).append("\t");
         }
         String res = sb.toString();
         return res.substring(0, res.length() - 1);

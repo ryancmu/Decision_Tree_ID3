@@ -80,13 +80,6 @@ public class DecisionTree {
                 dataset.add(entry);
             }
 
-//            System.out.println(dataset.size());
-//            for (Entry e : dataset){
-//                for (String s: attributes){
-//                    System.out.print(e.getKvPair().get(s) + " ");
-//                }
-//                System.out.println("");
-//            }
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -95,6 +88,7 @@ public class DecisionTree {
         }
     }
 
+    // Read the test arff
     public List<Entry> processTestInput(){
 
         List<Entry> testDataSet = new ArrayList<>();
@@ -146,9 +140,6 @@ public class DecisionTree {
     // Calculate the Information Entropy
     private double calcIE(List<Entry> curDataset) {
         Map<String, Integer> labelMap = new HashMap<>();
-//        for (Entry e: curDataset){
-//
-//        }
 
         for (Entry e : curDataset) {
             String tmpLabel = e.getKvPair().get(label);
@@ -173,10 +164,6 @@ public class DecisionTree {
         return entropy;
     }
 
-    // Calculate the Information Gain
-    private double calcIG() {
-        return 0;
-    }
 
     // Recusive to build the decision tree
     public TreeNode buildTree(List<Entry> curDataset, List<String> leftAttribute) {
@@ -210,23 +197,13 @@ public class DecisionTree {
 
         node.setType(TreeNode.ROOT_NODE);
         double infoEntropy = calcIE(curDataset);
-        System.out.println("=====calculate info entropy=====");
-//        for (Entry e: curDataset){
-//            System.out.print(e.getKvPair().get(label) + " / ");
-//        }
-        System.out.println(infoEntropy);
         double infoGain = -100;
         String splitAttr = "";
 
-        // select the attribute for this node
-        System.out.println("Attribute Number: " + leftAttribute.size() + " " + leftAttribute.get(0));
-        System.out.println("number of dataset " + curDataset.size());
-//        if(curDataset.size() == 4){
-//            Map<String, String> tmpMap = curDataset.get(i)
-//        }
+
         for (String attr : leftAttribute) {
 
-            System.out.println("Attr Name: " + attr);
+            //System.out.println("Attr Name: " + attr);
 
             // get the new dataset of attr
             Attribute tmpAttr = attributeMap.get(attr);
@@ -241,7 +218,7 @@ public class DecisionTree {
                 }
 
                 cIG += ((double) tmpDataset.size() / curDataset.size()) * calcIE(tmpDataset);
-                System.out.println("Attr Value " + value + " cIG = " + cIG);
+                //System.out.println("Attr Value " + value + " cIG = " + cIG);
             }
 
             double ig = infoEntropy - cIG;
@@ -251,7 +228,7 @@ public class DecisionTree {
             }
         }
 
-        System.out.println("split Attribute: " + splitAttr + " IG: " + infoGain);
+        //System.out.println("split Attribute: " + splitAttr + " IG: " + infoGain);
 
         // Generate the new leftAttribetes for Children
         node.setAttribute(splitAttr);
@@ -305,6 +282,7 @@ public class DecisionTree {
         return leftAttributes.size() == 0 ? true : false;
     }
 
+    // check the all attributes' values are same for current dataset
     private boolean checkSameAttributeValue(List<Entry> curDataset, List<String> leftAttributes){
         for (String s : leftAttributes){
             String attrValue = curDataset.get(0).getKvPair().get(s);
@@ -341,6 +319,7 @@ public class DecisionTree {
     }
 
 
+    // Get the dataset by attribute value
     private List<Entry> getDatasetByAttrValue(List<Entry> curDataset, String attr, String value) {
 
         //TODO this method can be optimized by get all datasets of all values by one loop
@@ -353,6 +332,7 @@ public class DecisionTree {
         return newDataset;
     }
 
+    // remove a used attribute from left attributes
     private List<String> removeAttr(List<String> attrs, String rmAttr) {
         List<String> leftAttributes = new ArrayList<>();
         for (String s : attrs) {
@@ -363,6 +343,7 @@ public class DecisionTree {
         return leftAttributes;
     }
 
+    // add a value to corresponding attribute
     private void addValueToAttributes(List<String> attrs, Map<String, Attribute> attrMap, String[] elements) {
         for (int i = 0; i < attrs.size(); i++) {
             String value = elements[i];
@@ -412,6 +393,7 @@ public class DecisionTree {
         return avgAccuracy;
     }
 
+    // get the accuracy of one time cross-validation
     private double getAccuracy(List<Entry> trainDataset, List<Entry> testDataset){
         List<String> leftAttrs = new ArrayList<>();
         for(String s : attributes){
@@ -433,6 +415,7 @@ public class DecisionTree {
         return accuracy;
     }
 
+    // classify one entry to right type
     private String classifyOneEntry(Entry e, TreeNode root){
         // If it is a leaf node, just return true or false;
         if (root.getType().equals(TreeNode.LEAF_NODE)){
@@ -446,7 +429,7 @@ public class DecisionTree {
 
 
     // Predict the test set
-    private void predictTestData() {
+    public void predictTestData() {
 
         List<Entry> testDataset = processTestInput();
 
@@ -462,10 +445,21 @@ public class DecisionTree {
 
         BufferedWriter bw;
         try {
-            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("result.arff")));
+            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("result")));
+
+            // output all attributes;
+            StringBuilder sb = new StringBuilder();
+            for (String s: attributes){
+                sb.append(String.format("%15s", s)).append("\t");
+            }
+            System.out.println(sb.toString());
+            bw.write(sb.toString());
+            bw.newLine();
+
             for (Entry e : testDataset){
                 String eLabel = classifyOneEntry(e, root);
                 e.getKvPair().put(label, eLabel);
+                System.out.println(e.toString());
                 bw.write(e.toString());
                 bw.newLine();
             }

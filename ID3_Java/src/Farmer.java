@@ -35,14 +35,9 @@ public class Farmer {
         }
 
 
-
-        DecisionTree dt = new DecisionTree();
-        dt.processInput();
-        //dt.testBuild();
-        System.out.println(dt.crossValidate(10));
-
     }
 
+    // Do the cross validation
     private static void crossValidation(String inputPath, int fold) throws Exception {
 
         PreReadFile prf = new PreReadFile();
@@ -54,24 +49,27 @@ public class Farmer {
 
         DecisionTree dt = new DecisionTree();
         dt.processInput();
-        String res = fold + " fold Cross Validation Accuracy: " + dt.crossValidate(fold);
+        String res = fold + " fold Cross Validation Accuracy: " + String.format("%.4f",dt.crossValidate(fold));
         System.out.println(res);
     }
 
+    // DO the predict
     private static void predict(String trainPath, String testPath) throws Exception {
         PreReadFile prf = new PreReadFile();
-        if ("a".equals(taskNo)){
+        if ("b".equals(taskNo)){
             prf.parseTrainProdIntro(trainPath);
+            prf.parseTestProdIntro(testPath);
         } else {
             prf.parseTrainProdSelect(trainPath);
+            prf.parseTestProdSelect(testPath);
         }
 
         DecisionTree dt = new DecisionTree();
         dt.processInput();
-        dt.processTestInput();
-
+        dt.predictTestData();
     }
 
+    // output the error
     private static void printError(){
         System.out.println("Parameters Error!");
         System.out.println("Please Follow the README file");
