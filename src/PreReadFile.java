@@ -8,14 +8,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class PreReadFile {
-    // store the median of column 2,3,6,7 in trainProdIntro
+    // you can change this number to indicate how many partition point in the tree (for all node with number)
+    private static int partition = 1;
+
+    // store the partition points of column 2,3,6,7 in trainProdIntro
     private static List<Double> introPartition2 = new ArrayList<>();
     private static List<Double> introPartition3 = new ArrayList<>();
     private static List<Double> introPartition6 = new ArrayList<>();
     private static List<Double> introPartition7 = new ArrayList<>();
 
-    // store the median of column 2,3,4,5 in trainProdSelection
-    private static int partition;
+    // store the partition points of column 2,3,4,5 in trainProdSelection
     private static List<Double> selectPartition2 = new ArrayList<>();
     private static List<Double> selectPartition3 = new ArrayList<>();
     private static List<Double> selectPartition4 = new ArrayList<>();
@@ -34,14 +36,16 @@ public class PreReadFile {
     private static List<Double> s5 = new ArrayList<>();
 
     public static void main(String[] args) {
+        //Testing
+
         // String fileName = args[0];
 //        String fileName = "trainProdIntro.binary.arff";
          String fileName = "trainProdSelection.arff";
 
          if (fileName.equals("trainProdIntro.binary.arff")) {
-             parseTrainProdIntro(fileName, 1);
+             parseTrainProdIntro(fileName);
          } else {
-             parseTrainProdSelect(fileName, 3);
+             parseTrainProdSelect(fileName);
          }
          
          //parseTest
@@ -208,8 +212,8 @@ public class PreReadFile {
         }
     }
 
-    public static void parseTrainProdSelect(String fileName, int partitionNum) {
-        partition = partitionNum;
+    public static void parseTrainProdSelect(String fileName) {
+//        partition = partitionNum;
         BufferedReader br = null;
         FileWriter fWriter = null;
         BufferedWriter bw = null;
@@ -288,8 +292,8 @@ public class PreReadFile {
 
     }
 
-    public static void parseTrainProdIntro(String fileName, int partitionNum) {
-        partition = partitionNum;
+    public static void parseTrainProdIntro(String fileName) {
+//        partition = partitionNum;
         BufferedReader br = null;
         FileWriter fWriter = null;
         BufferedWriter bw = null;
