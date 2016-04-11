@@ -9,21 +9,13 @@ import java.util.List;
 
 public class PreReadFile {
     // store the median of column 2,3,6,7 in trainProdIntro
-    // private static double introMedian2 = 0;
-    // private static double introMedian3 = 0;
-    // private static double introMedian6 = 0;
-    // private static double introMedian7 = 0;
     private static List<Double> introMedian2 = new ArrayList<>();
     private static List<Double> introMedian3 = new ArrayList<>();
     private static List<Double> introMedian6 = new ArrayList<>();
     private static List<Double> introMedian7 = new ArrayList<>();
 
     // store the median of column 2,3,4,5 in trainProdSelection
-    private int partition;
-    // private static double selectMedian2 = 0;
-    // private static double selectMedian3 = 0;
-    // private static double selectMedian4 = 0;
-    // private static double selectMedian5 = 0;
+    private static int partition;
     private static List<Double> selectMedian2 = new ArrayList<>();
     private static List<Double> selectMedian3 = new ArrayList<>();
     private static List<Double> selectMedian4 = new ArrayList<>();
@@ -46,11 +38,11 @@ public class PreReadFile {
         String fileName = "trainProdIntro.binary.arff";
         // String fileName = "trainProdIntro.binary.arff";
 
-        // if (fileName.equals("trainProdIntro.binary.arff")) {
-        // parseTrainProdIntro(fileName);
-        // } else {
-        // parseTrainProdSelect(fileName);
-        // }
+         if (fileName.equals("trainProdIntro.binary.arff")) {
+             parseTrainProdIntro(fileName, 1);
+         } else {
+             parseTrainProdSelect(fileName, 1);
+         }
     }
 
     public void parseTestProdIntro(String testFileName) {
@@ -60,7 +52,7 @@ public class PreReadFile {
 
         try {
             br = new BufferedReader(new FileReader(testFileName));
-            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("test_tmp.arff")));
+            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("test_tmpIntro.arff")));
             String line = null;
             boolean record = false;
             while ((line = br.readLine()) != null) {
@@ -97,7 +89,7 @@ public class PreReadFile {
         }
     }
 
-    private void prodIntroHelper(ArrayList<ArrayList<String>> set, BufferedWriter bw) {
+    private static void prodIntroHelper(ArrayList<ArrayList<String>> set, BufferedWriter bw) {
         try {
 
             for (int i = 0; i < set.size(); i++) {
@@ -154,7 +146,7 @@ public class PreReadFile {
         ArrayList<ArrayList<String>> set = new ArrayList<>();
 
         try {
-            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("test_tmp.arff")));
+            bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("test_tmpSelection.arff")));
             br = new BufferedReader(new FileReader(testFileName));
             String line = null;
             boolean record = false;
@@ -191,7 +183,7 @@ public class PreReadFile {
         }
     }
 
-    private void prodSelectHelper(ArrayList<ArrayList<String>> set, BufferedWriter bw) throws IOException {
+    private static void prodSelectHelper(ArrayList<ArrayList<String>> set, BufferedWriter bw) throws IOException {
         for (int i = 0; i < set.size(); i++) {
             // 2
             for (int j = 0; j < selectMedian2.size(); j++) {
@@ -236,7 +228,7 @@ public class PreReadFile {
         }
     }
 
-    public void parseTrainProdSelect(String fileName, int partitionNum) {
+    public static void parseTrainProdSelect(String fileName, int partitionNum) {
         partition = partitionNum;
         BufferedReader br = null;
         FileWriter fWriter = null;
@@ -311,7 +303,7 @@ public class PreReadFile {
 
     }
 
-    public void parseTrainProdIntro(String fileName, int partitionNum) {
+    public static void parseTrainProdIntro(String fileName, int partitionNum) {
         partition = partitionNum;
         BufferedReader br = null;
         FileWriter fWriter = null;
