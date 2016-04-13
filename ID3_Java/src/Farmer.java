@@ -53,7 +53,8 @@ public class Farmer {
         System.out.println(res);
     }
 
-    // DO the predict
+
+    // DO the predict and generate the predict file.
     private static void predict(String trainPath, String testPath) throws Exception {
         PreReadFile prf = new PreReadFile();
         if ("b".equals(taskNo)){
