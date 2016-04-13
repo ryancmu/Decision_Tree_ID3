@@ -40,7 +40,7 @@ public class PreReadFile {
         //Testing
 
         // String fileName = args[0];
-//        String fileName = "trainProdIntro.binary.arff";
+        // String fileName = "trainProdIntro.binary.arff";
         String fileName = "trainProdSelection.arff";
 
         if (fileName.equals("trainProdIntro.binary.arff")) {
@@ -50,7 +50,7 @@ public class PreReadFile {
         }
 
         //parseTest
-//         String testFileName = "testProdIntro.binary.arff";
+        //String testFileName = "testProdIntro.binary.arff";
         String testFileName =  "testProdSelection.arff";
 
         if (testFileName.equals("testProdIntro.binary.arff")) {
